@@ -8,7 +8,14 @@ import java.io.PrintStream;
 
 import javax.lang.model.util.ElementScanner6;
 
-public class SIMPLESEM{
+public class SIMPLESEM {
+	
+	public static class tokenType {
+		static String SET = "SET";
+		static String JUMP = "JUMP";
+		static String JUMPT = "JUMPT";
+		static String HALT = "HALT";
+	}
 
 	static String studentName = "YOUR NAME";
 	static String studentID = "YOUR 8-DIGIT ID";
@@ -65,26 +72,32 @@ public class SIMPLESEM{
 	private void parseStatement() 
 	{
 		printRule("Statement");
-		// TODO Auto-generated method stub
 		
-		String token = nextChar;
-		String line = in.readLine(); // read in a line of text 
+		String token;
+		String line;
+		line = in.readLine();
 
-		if (token == "set")
+		// TODO: 
+		// Read each line
+		// Tokenize the line (Use regex)
+		// Keep all the tokens in a list inside each parseStatement function
+		// Parse each token respectively
+
+		if (token == tokenType.SET)
 		{
-			set(token, line);	
+			parseSet(token, line);	
 		}
-		else if (token == "jumpt")
+		else if (token == tokenType.JUMPT)
 		{
-			jumpt(token, line);
+			parseJumpt(token, line);
 		}
-		else if (token == "jump")
+		else if (token == tokenType.JUMP)
 		{
-			jump(token, line);
+			parseJump(token, line);
 		}
-		else if (token == "halt")
+		else if (token == tokenType.HALT)
 		{
-			halt();
+			parseHalt();
 		}
 		else 
 		{
@@ -92,20 +105,20 @@ public class SIMPLESEM{
 		}
 	}
 
-	private void set(String token, String currentLine)
+	private void parseSet(String token, String currentLine)
 	{
 		// display "Set"
 		// check if READ or WRITE is the end of the line 
 		// go to expression function 
 
 		if (token.indexOf("read") == EOF)
-			expression(token, currentLine);
+			parseExpression(token, currentLine);
 
 		if (token.indexOf("write") == EOF)
-			expression(token, currentLine);
+			parseExpression(token, currentLine);
 	}
 
-	private void jumpt(String token, String currentLine)
+	private void parseJumpt(String token, String currentLine)
 	{
 		// display "Jumpt"
 		// check three expression 
@@ -113,32 +126,32 @@ public class SIMPLESEM{
 		// --> get the grammar of 8, 0, 1 
 	}
 
-	private void jump(String token, String currentLine)
+	private void parseJump(String token, String currentLine)
 	{
 		// display "Jump"
-		// chekc the expression 
+		// check the expression 
 	}
 
-	private void halt()
+	private void parseHalt()
 	{
 		// return
 	}
 
-	private void expression(String token, String currentLine)
+	private void parseExpression(String token, String currentLine)
 	{
 		// display "Expression"
 		// find the delimiter: + - 
 		// check the left and right teram of delimiter 
 	}
 
-	private void term(String token, String currentLine)
+	private void parseTerm(String token, String currentLine)
 	{
 		// display "Term"
 		// find the delimiter: * / %
 		// check the left and right factor of delimiter 
 	}
 
-	private void factor(String token, String currentLine)
+	private void parseFactor(String token, String currentLine)
 	{
 		// display "Factor"
 		// check if is number -> if yes, then end 
@@ -146,7 +159,7 @@ public class SIMPLESEM{
 		// # might be token[2]
 	}
 
-	private void number(String token, String currentLine)
+	private void parseNumber(String token, String currentLine)
 	{
 		// display number 
 	}
