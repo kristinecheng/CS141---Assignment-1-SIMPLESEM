@@ -10,11 +10,16 @@ import javax.lang.model.util.ElementScanner6;
 
 public class SIMPLESEM {
 
-	public static class tokenType {
+	private static class tokenType {
 		static String SET = "set";
 		static String JUMP = "jump";
 		static String JUMPT = "jumpt";
 		static String HALT = "halt";
+	}
+
+	private static class terminalType {
+		static String READ = "read";
+		static String WRITE = "write";
 	}
 
 	static String studentName = "YOUR NAME";
@@ -65,7 +70,7 @@ public class SIMPLESEM {
 		String token = "";
 		String content = "";
 
-		while (nextChar != 32 && nextChar != -1) {
+		while (nextChar != 32 && nextChar != EOF) {
 			token += Character.toString(nextChar);
 			nextChar = SIMPLESEM.in.read();
 		}
@@ -73,22 +78,13 @@ public class SIMPLESEM {
 		if (nextChar != EOF) {
 			nextChar = SIMPLESEM.in.read();
 
-			while (nextChar != 10 && nextChar != 13) {
+			while (nextChar != 10 && nextChar != 13 && nextChar != EOF) {
 				content += Character.toString(nextChar);
 				nextChar = SIMPLESEM.in.read();
 			}
 		}
 
-		// System.out.println(token);
-		// System.out.println(content);
-
 		token = removeCRLF(token);
-
-		// TODO:
-		// Read each line
-		// Tokenize the line (Use regex)
-		// Keep all the tokens in a list inside each parseStatement function
-		// Parse each token respectively
 
 		if (token.equals(tokenType.SET)) {
 			parseSet(token, content);
@@ -116,22 +112,30 @@ public class SIMPLESEM {
 		return str;
 	}
 
-	private void parseSet(String token, String currentLine) {
-		printRule("Set");
-		// display "Set"
-		// check if READ or WRITE is the end of the line
-		// go to expression function
+	private String removeSpaces(String str) {
+		str = str.replace(" ", "");
 
-		// if (token.indexOf("read") == EOF)
-		// parseExpression(token, currentLine);
-
-		// if (token.indexOf("write") == EOF)
-		// parseExpression(token, currentLine);
-
-		System.out.println("Parsing set");
+		return str;
 	}
 
-	private void parseJumpt(String token, String currentLine) {
+	private void parseSet(String token, String content) {
+		printRule("Set");
+		System.out.println("Parsing set");
+
+		String[] tokens = content.split(",");
+		String left = removeSpaces(tokens[0]);
+		String right = removeSpaces(tokens[1]);
+
+		if (!left.equals(terminalType.WRITE)) {
+			parseExpression(left);
+		}
+
+		if (!right.equals(terminalType.READ)) {
+			parseExpression(right);
+		}
+	}
+
+	private void parseJumpt(String token, String content) {
 		printRule("Jumpt");
 		// display "Jumpt"
 		// check three expression
@@ -141,7 +145,7 @@ public class SIMPLESEM {
 		System.out.println("Parsing jumpt");
 	}
 
-	private void parseJump(String token, String currentLine) {
+	private void parseJump(String token, String content) {
 		printRule("Jump");
 		// display "Jump"
 		// check the expression
@@ -155,21 +159,21 @@ public class SIMPLESEM {
 		return;
 	}
 
-	private void parseExpression(String token, String currentLine) {
+	private void parseExpression(String content) {
 		printRule("Expression");
 		// display "Expression"
 		// find the delimiter: + -
 		// check the left and right teram of delimiter
 	}
 
-	private void parseTerm(String token, String currentLine) {
+	private void parseTerm(String token, String content) {
 		printRule("Term");
 		// display "Term"
 		// find the delimiter: * / %
 		// check the left and right factor of delimiter
 	}
 
-	private void parseFactor(String token, String currentLine) {
+	private void parseFactor(String token, String content) {
 		printRule("Factor");
 		// display "Factor"
 		// check if is number -> if yes, then end
@@ -177,7 +181,7 @@ public class SIMPLESEM {
 		// # might be token[2]
 	}
 
-	private void parseNumber(String token, String currentLine) {
+	private void parseNumber(String token, String content) {
 		printRule("Number");
 		// display number
 	}

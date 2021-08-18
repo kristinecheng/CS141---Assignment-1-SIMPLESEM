@@ -1,12 +1,8 @@
 Program
 Statement
 Set
-Statement
-Jumpt
-Statement
-Set
+Expression
 Statement
 Set
-Statement
-Jump
+Expression
 Statement
