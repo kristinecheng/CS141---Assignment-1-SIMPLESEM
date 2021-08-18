@@ -161,20 +161,35 @@ public class SIMPLESEM {
 
 	private void parseExpression(String content) {
 		printRule("Expression");
+		System.out.println("Parsing expression");
 		// display "Expression"
 		// find the delimiter: + -
 		// check the left and right teram of delimiter
+
+		String[] tokens = content.split("\\+|\\-");
+
+		for (int i = 0; i < tokens.length; i++) {
+			parseTerm(tokens[i]);
+		}
 	}
 
-	private void parseTerm(String token, String content) {
+	private void parseTerm(String content) {
 		printRule("Term");
+		System.out.println("Parsing term");
 		// display "Term"
 		// find the delimiter: * / %
 		// check the left and right factor of delimiter
+
+		String[] tokens = content.split("\\*|\\/|%");
+
+		for (int i = 0; i < tokens.length; i++) {
+			parseFactor(tokens[i]);
+		}
 	}
 
-	private void parseFactor(String token, String content) {
+	private void parseFactor(String content) {
 		printRule("Factor");
+		System.out.println("Parsing factor");
 		// display "Factor"
 		// check if is number -> if yes, then end
 		// if find symbol "D", go back to expression and check the chracter D[#]

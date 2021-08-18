@@ -2,7 +2,12 @@ Program
 Statement
 Set
 Expression
-Statement
-Set
+Term
+Factor
 Expression
+Term
+Factor
+Term
+Factor
+Factor
 Statement

@@ -1,3 +1,2 @@
-set 0, read
-set write, D[0]
+set 0, D[0] - 1*2
 halt
