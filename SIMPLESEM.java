@@ -11,10 +11,10 @@ import javax.lang.model.util.ElementScanner6;
 public class SIMPLESEM {
 	
 	public static class tokenType {
-		static String SET = "SET";
-		static String JUMP = "JUMP";
-		static String JUMPT = "JUMPT";
-		static String HALT = "HALT";
+		static String SET = "set";
+		static String JUMP = "jump";
+		static String JUMPT = "jumpt";
+		static String HALT = "halt";
 	}
 
 	static String studentName = "YOUR NAME";
@@ -28,7 +28,7 @@ public class SIMPLESEM {
 	public static FileOutputStream outFile;
 	private static PrintStream fileData;
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
 		SIMPLESEM s = new SIMPLESEM(args[0]);
 		s.parseProgram();
@@ -59,7 +59,7 @@ public class SIMPLESEM {
 		}
 	}
 	
-	public void parseProgram() 
+	public void parseProgram() throws IOException 
 	{
         printRule("Program");
 		parseStatement();
@@ -69,13 +69,31 @@ public class SIMPLESEM {
 		}		
 	}
 
-	private void parseStatement() 
+	private void parseStatement() throws IOException 
 	{
 		printRule("Statement");
-		
-		String token;
-		String line;
-		line = in.readLine();
+
+		String token = "";
+		String content = "";
+
+		while (nextChar != 32 && nextChar != -1) {
+			token += Character.toString(nextChar);
+			nextChar = SIMPLESEM.in.read();
+		}
+
+		if (nextChar != EOF) {
+			nextChar = SIMPLESEM.in.read();
+
+			while (nextChar != 10 && nextChar != 13) {
+				content += Character.toString(nextChar);
+				nextChar = SIMPLESEM.in.read();
+			}
+		}
+
+		// System.out.println(token);
+		// System.out.println(content);
+
+		token = removeCRLF(token);
 
 		// TODO: 
 		// Read each line
@@ -83,26 +101,26 @@ public class SIMPLESEM {
 		// Keep all the tokens in a list inside each parseStatement function
 		// Parse each token respectively
 
-		if (token == tokenType.SET)
-		{
-			parseSet(token, line);	
-		}
-		else if (token == tokenType.JUMPT)
-		{
-			parseJumpt(token, line);
-		}
-		else if (token == tokenType.JUMP)
-		{
-			parseJump(token, line);
-		}
-		else if (token == tokenType.HALT)
-		{
+		if (token.equals(tokenType.SET)) {
+			parseSet(token, content);
+		} else if (token.equals(tokenType.JUMPT)) {
+			parseJumpt(token, content);
+		} else if (token.equals(tokenType.JUMP)) {
+			parseJump(token, content);
+		} else if (token.equals(tokenType.HALT)) {
 			parseHalt();
+		} else {
+			System.out.println("Expression Fail");
 		}
-		else 
-		{
-			System.out.println("Expression Fail\n");
-		}
+	}
+	
+	private String removeCRLF(String str) {
+
+		str = str.replace("\r", "");
+		str = str.replace("\n", "");
+		str = str.replace("\r\n", "");
+
+		return str;
 	}
 
 	private void parseSet(String token, String currentLine)
@@ -111,11 +129,13 @@ public class SIMPLESEM {
 		// check if READ or WRITE is the end of the line 
 		// go to expression function 
 
-		if (token.indexOf("read") == EOF)
-			parseExpression(token, currentLine);
+		// if (token.indexOf("read") == EOF)
+		// 	parseExpression(token, currentLine);
 
-		if (token.indexOf("write") == EOF)
-			parseExpression(token, currentLine);
+		// if (token.indexOf("write") == EOF)
+		// 	parseExpression(token, currentLine);
+
+		System.out.println("Parsing set");
 	}
 
 	private void parseJumpt(String token, String currentLine)
@@ -124,24 +144,30 @@ public class SIMPLESEM {
 		// check three expression 
 		// ex. jumpt 8, D[0] == D[1]
 		// --> get the grammar of 8, 0, 1 
+
+		System.out.println("Parsing jumpt");
 	}
 
 	private void parseJump(String token, String currentLine)
 	{
 		// display "Jump"
 		// check the expression 
+
+		System.out.println("Parsing jump");
 	}
 
 	private void parseHalt()
 	{
 		// return
+
+		System.out.println("Parsing halt");
 	}
 
 	private void parseExpression(String token, String currentLine)
 	{
 		// display "Expression"
 		// find the delimiter: + - 
-		// check the left and right teram of delimiter 
+		// check the left and right teram of delimiter
 	}
 
 	private void parseTerm(String token, String currentLine)
