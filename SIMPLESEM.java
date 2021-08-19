@@ -53,7 +53,7 @@ public class SIMPLESEM {
 			nextChar = SIMPLESEM.in.read(); // read in an single character
 			outFile = new FileOutputStream(sourceFile + ".out");
 			fileData = new PrintStream(outFile);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("init: Errors accessing source file " + sourceFile);
@@ -150,12 +150,10 @@ public class SIMPLESEM {
 		// ex. jumpt 8, D[0] == D[1]
 		// --> get the grammar of 8, 0, 1
 
-		System.out.println("Jumpt: " + content);
-
 		String[] tokens = content.split(",");
 		String left = removeSpaces(tokens[0]);
 		String right = removeSpaces(tokens[1]);
-		
+
 		String[] rest = right.split("!=|==|>|<|>=|<=");
 
 		parseExpression(left);
@@ -191,11 +189,31 @@ public class SIMPLESEM {
 		// find the delimiter: + -
 		// check the left and right teram of delimiter
 
-		String[] tokens = content.split("\\+|\\-");
+		String term = "";
+		int paren_count = 0;
 
-		for (int i = 0; i < tokens.length; i++) {
-			parseTerm(tokens[i]);
+		System.out.println(content);
+
+		for (int i = 0; i < content.length(); i++) {
+			char chr = content.charAt(i);
+
+			if (chr == '[' || chr == '(')
+				paren_count++;
+
+			if (chr == ']' || chr == ')')
+				paren_count--;
+
+			term += chr;
+
+			if (paren_count == 0 && (chr == '+' || chr == '-')) {
+				term = term.substring(0, term.length() - 1);
+				
+				parseTerm(term);
+				term = "";
+			}
 		}
+
+		parseTerm(term);
 	}
 
 	private void parseTerm(String content) {
@@ -206,9 +224,12 @@ public class SIMPLESEM {
 		// find the delimiter: * / %
 		// check the left and right factor of delimiter
 
+		System.out.println("TERM: " + content);
+
 		String[] tokens = content.split("\\*|\\/|%");
 
 		for (int i = 0; i < tokens.length; i++) {
+			System.out.println("FACTORS: " + tokens[i]);
 			parseFactor(tokens[i]);
 		}
 	}
@@ -221,6 +242,11 @@ public class SIMPLESEM {
 		// check if is number -> if yes, then end
 		// if find symbol "D", go back to expression and check the chracter D[#]
 		// # might be token[2]
+
+		content = content.replace("(", "");
+		content = content.replace(")", "");
+
+		System.out.println(content);
 
 		Pattern p = Pattern.compile("0|[1-9]+");
 		Matcher re = p.matcher(content);
@@ -236,7 +262,7 @@ public class SIMPLESEM {
 		} else {
 			parseExpression(content);
 
-		} 	
+		}
 	}
 
 	private void parseNumber(String content) {
