@@ -25,8 +25,8 @@ public class SIMPLESEM {
 	private boolean debug = false;
 
 	static String studentName = "Eric Ko / Kristine Cheng";
-	static String studentID = "Eric: 88335453 / Kristine: ";
-	static String uciNetID = "YOUR UCI-NET ID";
+	static String studentID = "Eric: 88335453 / Kristine: 62637032";
+	static String uciNetID = "Eric: sangyuk1 / Kristine: cycheng5";
 	private static int nextChar; // contains the character(or -1==EOF)
 	private static final int EOF = -1; // int value for End of File
 	private int number;
