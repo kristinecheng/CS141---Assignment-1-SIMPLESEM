@@ -8,8 +8,6 @@ import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.lang.model.util.ElementScanner6;
-
 public class SIMPLESEM {
 
 	private static class tokenType {
@@ -26,8 +24,8 @@ public class SIMPLESEM {
 
 	private boolean debug = false;
 
-	static String studentName = "YOUR NAME";
-	static String studentID = "YOUR 8-DIGIT ID";
+	static String studentName = "Eric Ko / Kristine Cheng";
+	static String studentID = "Eric: 88335453 / Kristine: ";
 	static String uciNetID = "YOUR UCI-NET ID";
 	private static int nextChar; // contains the character(or -1==EOF)
 	private static final int EOF = -1; // int value for End of File
@@ -125,8 +123,6 @@ public class SIMPLESEM {
 
 	private void parseSet(String token, String content) {
 		printRule("Set");
-		if (debug)
-			System.out.println("Parsing set");
 
 		String[] tokens = content.split(",");
 		String left = removeSpaces(tokens[0]);
@@ -143,12 +139,6 @@ public class SIMPLESEM {
 
 	private void parseJumpt(String token, String content) {
 		printRule("Jumpt");
-		if (debug)
-			System.out.println("Parsing jumpt");
-		// display "Jumpt"
-		// check three expression
-		// ex. jumpt 8, D[0] == D[1]
-		// --> get the grammar of 8, 0, 1
 
 		String[] tokens = content.split(",");
 		String left = removeSpaces(tokens[0]);
@@ -165,29 +155,17 @@ public class SIMPLESEM {
 
 	private void parseJump(String token, String content) {
 		printRule("Jump");
-		if (debug)
-			System.out.println("Parsing jump");
-		// display "Jump"
-		// check the expression
 
 		token = removeSpaces(content);
 		parseExpression(token);
 	}
 
 	private void parseHalt() {
-		if (debug)
-			System.out.println("Parsing halt");
-
 		return;
 	}
 
 	private void parseExpression(String content) {
 		printRule("Expr");
-		if (debug)
-			System.out.println("Parsing expression");
-		// display "Expression"
-		// find the delimiter: + -
-		// check the left and right teram of delimiter
 
 		String term = "";
 		int paren_count = 0;
@@ -216,9 +194,6 @@ public class SIMPLESEM {
 
 	private void parseTerm(String content) {
 		printRule("Term");
-		if (debug)
-			System.out.println("Parsing term");
-
 		
 		String factor = "";
 		int paren_count = 0;
@@ -237,31 +212,16 @@ public class SIMPLESEM {
 			if (paren_count == 0 && (chr == '*' || chr == '/' || chr == '%')) {
 				factor = factor.substring(0, factor.length() - 1);
 
-
-				// System.out.println(factor);
 				parseFactor(factor);
 				factor = "";
 			}
 		}
 
 		parseFactor(factor);
-		// System.out.println(factor);
-
 	}
 
 	private void parseFactor(String content) {
 		printRule("Factor");
-		if (debug)
-			System.out.println("Parsing factor");
-		// display "Factor"
-		// check if is number -> if yes, then end
-		// if find symbol "D", go back to expression and check the chracter D[#]
-		// # might be token[2]
-
-		System.out.println(content);
-
-		// content = content.replace("(", "");
-		// content = content.replace(")", "");
 
 		Pattern p = Pattern.compile("0|[1-9]+");
 		Matcher re = p.matcher(content);
@@ -272,14 +232,12 @@ public class SIMPLESEM {
 
 		else if (content.substring(0, 1).equals("D")) {
 			String exp = content.substring(2, content.length() - 1);
-			// System.out.println(exp);
 			parseExpression(exp);
 
 		}
 		
 		else if (content.substring(0, 1).equals("(")) {
 			String exp = content.substring(1, content.length() - 1);
-			// System.out.println(exp);
 			parseExpression(exp);
 
 		}
@@ -292,8 +250,5 @@ public class SIMPLESEM {
 
 	private void parseNumber(String content) {
 		printRule("Number");
-		// if (debug)
-			System.out.println("Parsing number");
-		// display number
 	}
 }
