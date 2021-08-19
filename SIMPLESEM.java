@@ -184,7 +184,7 @@ public class SIMPLESEM {
 	}
 
 	private void parseExpression(String content) {
-		printRule("Expression");
+		printRule("Expr");
 		if (debug)
 			System.out.println("Parsing expression");
 		// display "Expression"
