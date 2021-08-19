@@ -192,8 +192,6 @@ public class SIMPLESEM {
 		String term = "";
 		int paren_count = 0;
 
-		System.out.println(content);
-
 		for (int i = 0; i < content.length(); i++) {
 			char chr = content.charAt(i);
 
@@ -220,18 +218,35 @@ public class SIMPLESEM {
 		printRule("Term");
 		if (debug)
 			System.out.println("Parsing term");
-		// display "Term"
-		// find the delimiter: * / %
-		// check the left and right factor of delimiter
 
-		System.out.println("TERM: " + content);
+		
+		String factor = "";
+		int paren_count = 0;
 
-		String[] tokens = content.split("\\*|\\/|%");
+		for (int i = 0; i < content.length(); i++) {
+			char chr = content.charAt(i);
 
-		for (int i = 0; i < tokens.length; i++) {
-			System.out.println("FACTORS: " + tokens[i]);
-			parseFactor(tokens[i]);
+			if (chr == '[' || chr == '(')
+				paren_count++;
+
+			if (chr == ']' || chr == ')')
+				paren_count--;
+
+			factor += chr;
+
+			if (paren_count == 0 && (chr == '*' || chr == '/' || chr == '%')) {
+				factor = factor.substring(0, factor.length() - 1);
+
+
+				// System.out.println(factor);
+				parseFactor(factor);
+				factor = "";
+			}
 		}
+
+		parseFactor(factor);
+		// System.out.println(factor);
+
 	}
 
 	private void parseFactor(String content) {
@@ -243,10 +258,10 @@ public class SIMPLESEM {
 		// if find symbol "D", go back to expression and check the chracter D[#]
 		// # might be token[2]
 
-		content = content.replace("(", "");
-		content = content.replace(")", "");
-
 		System.out.println(content);
+
+		// content = content.replace("(", "");
+		// content = content.replace(")", "");
 
 		Pattern p = Pattern.compile("0|[1-9]+");
 		Matcher re = p.matcher(content);
@@ -257,17 +272,27 @@ public class SIMPLESEM {
 
 		else if (content.substring(0, 1).equals("D")) {
 			String exp = content.substring(2, content.length() - 1);
+			// System.out.println(exp);
 			parseExpression(exp);
 
-		} else {
-			parseExpression(content);
+		}
+		
+		else if (content.substring(0, 1).equals("(")) {
+			String exp = content.substring(1, content.length() - 1);
+			// System.out.println(exp);
+			parseExpression(exp);
+
+		}
+		
+		else {
+			// parseExpression(content);
 
 		}
 	}
 
 	private void parseNumber(String content) {
 		printRule("Number");
-		if (debug)
+		// if (debug)
 			System.out.println("Parsing number");
 		// display number
 	}
