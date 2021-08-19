@@ -8,8 +8,6 @@ import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.lang.model.util.ElementScanner6;
-
 public class SIMPLESEM {
 
 	private static class tokenType {
@@ -26,9 +24,9 @@ public class SIMPLESEM {
 
 	private boolean debug = false;
 
-	static String studentName = "YOUR NAME";
-	static String studentID = "YOUR 8-DIGIT ID";
-	static String uciNetID = "YOUR UCI-NET ID";
+	static String studentName = "Eric Ko / Kristine Cheng";
+	static String studentID = "Eric: 88335453 / Kristine: 62637032";
+	static String uciNetID = "Eric: sangyuk1 / Kristine: cycheng5";
 	private static int nextChar; // contains the character(or -1==EOF)
 	private static final int EOF = -1; // int value for End of File
 	private int number;
@@ -53,7 +51,7 @@ public class SIMPLESEM {
 			nextChar = SIMPLESEM.in.read(); // read in an single character
 			outFile = new FileOutputStream(sourceFile + ".out");
 			fileData = new PrintStream(outFile);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("init: Errors accessing source file " + sourceFile);
@@ -125,8 +123,6 @@ public class SIMPLESEM {
 
 	private void parseSet(String token, String content) {
 		printRule("Set");
-		if (debug)
-			System.out.println("Parsing set");
 
 		String[] tokens = content.split(",");
 		String left = removeSpaces(tokens[0]);
@@ -143,19 +139,11 @@ public class SIMPLESEM {
 
 	private void parseJumpt(String token, String content) {
 		printRule("Jumpt");
-		if (debug)
-			System.out.println("Parsing jumpt");
-		// display "Jumpt"
-		// check three expression
-		// ex. jumpt 8, D[0] == D[1]
-		// --> get the grammar of 8, 0, 1
-
-		System.out.println("Jumpt: " + content);
 
 		String[] tokens = content.split(",");
 		String left = removeSpaces(tokens[0]);
 		String right = removeSpaces(tokens[1]);
-		
+
 		String[] rest = right.split("!=|==|>|<|>=|<=");
 
 		parseExpression(left);
@@ -167,60 +155,73 @@ public class SIMPLESEM {
 
 	private void parseJump(String token, String content) {
 		printRule("Jump");
-		if (debug)
-			System.out.println("Parsing jump");
-		// display "Jump"
-		// check the expression
 
 		token = removeSpaces(content);
 		parseExpression(token);
 	}
 
 	private void parseHalt() {
-		if (debug)
-			System.out.println("Parsing halt");
-
 		return;
 	}
 
 	private void parseExpression(String content) {
 		printRule("Expr");
-		if (debug)
-			System.out.println("Parsing expression");
-		// display "Expression"
-		// find the delimiter: + -
-		// check the left and right teram of delimiter
 
-		String[] tokens = content.split("\\+|\\-");
+		String term = "";
+		int paren_count = 0;
 
-		for (int i = 0; i < tokens.length; i++) {
-			parseTerm(tokens[i]);
+		for (int i = 0; i < content.length(); i++) {
+			char chr = content.charAt(i);
+
+			if (chr == '[' || chr == '(')
+				paren_count++;
+
+			if (chr == ']' || chr == ')')
+				paren_count--;
+
+			term += chr;
+
+			if (paren_count == 0 && (chr == '+' || chr == '-')) {
+				term = term.substring(0, term.length() - 1);
+				
+				parseTerm(term);
+				term = "";
+			}
 		}
+
+		parseTerm(term);
 	}
 
 	private void parseTerm(String content) {
 		printRule("Term");
-		if (debug)
-			System.out.println("Parsing term");
-		// display "Term"
-		// find the delimiter: * / %
-		// check the left and right factor of delimiter
+		
+		String factor = "";
+		int paren_count = 0;
 
-		String[] tokens = content.split("\\*|\\/|%");
+		for (int i = 0; i < content.length(); i++) {
+			char chr = content.charAt(i);
 
-		for (int i = 0; i < tokens.length; i++) {
-			parseFactor(tokens[i]);
+			if (chr == '[' || chr == '(')
+				paren_count++;
+
+			if (chr == ']' || chr == ')')
+				paren_count--;
+
+			factor += chr;
+
+			if (paren_count == 0 && (chr == '*' || chr == '/' || chr == '%')) {
+				factor = factor.substring(0, factor.length() - 1);
+
+				parseFactor(factor);
+				factor = "";
+			}
 		}
+
+		parseFactor(factor);
 	}
 
 	private void parseFactor(String content) {
 		printRule("Factor");
-		if (debug)
-			System.out.println("Parsing factor");
-		// display "Factor"
-		// check if is number -> if yes, then end
-		// if find symbol "D", go back to expression and check the chracter D[#]
-		// # might be token[2]
 
 		Pattern p = Pattern.compile("0|[1-9]+");
 		Matcher re = p.matcher(content);
@@ -233,16 +234,21 @@ public class SIMPLESEM {
 			String exp = content.substring(2, content.length() - 1);
 			parseExpression(exp);
 
-		} else {
-			parseExpression(content);
+		}
+		
+		else if (content.substring(0, 1).equals("(")) {
+			String exp = content.substring(1, content.length() - 1);
+			parseExpression(exp);
 
-		} 	
+		}
+		
+		else {
+			parseNumber(content);
+
+		}
 	}
 
 	private void parseNumber(String content) {
 		printRule("Number");
-		if (debug)
-			System.out.println("Parsing number");
-		// display number
 	}
 }
